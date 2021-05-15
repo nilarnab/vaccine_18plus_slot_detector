@@ -28,34 +28,41 @@ d1 = today.strftime("%d-%m-%Y")
 
 print("DATE", d1)
 
-headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
-r = requests.get('https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=621&date=' + d1, headers = headers)
 
-print(r.status_code)
 
 iterations = 1
 
 while True:
+    
+    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+    r = requests.get('https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=621&date=' + d1, headers = headers)
+
     found = False
     if r.status_code == 200:
         for center in r.json()['centers']:
             for session in center['sessions']:
-                print(center['name'], ':', 'DATE: ', session['date'], 'age limit', session['min_age_limit'], 'capacity', session['available_capacity'])
+                # print(center['name'], ':', 'DATE: ', session['date'], 'age limit', session['min_age_limit'], 'capacity', session['available_capacity'])
                 if session['min_age_limit'] == 18 and session['available_capacity']:
-                    print('FOUND')
+                    # print('FOUND')
                     found = True
                 else:
+                    pass
+
+                if session['min_age_limit'] == 18:
+                    # print(center['name'], ':', 'DATE: ', session['date'], 'age limit', session['min_age_limit'], 'capacity', session['available_capacity'])
                     pass
     else:
         print('MAYBE THEIR SERVER IS DOWN')
 
     if found:
         print("CALLING BEEP")
-
         # frequency, duration(milisec)
         winsound.Beep(800, 3000)
+    else:
+        print("NOT FOUND", iterations)
+
+        
     time.sleep(5)
-    print("ITERATIONS", iterations)
+    # print("ITERATIONS", iterations)
     iterations += 1
     clear()
-
